@@ -1,3 +1,10 @@
+// Define named constants
+START_ARG_NUM = 2
+DEFAULT_PORT = 3000
+ERROR = 1
+HTTP_OK_STATUS = 200
+FILE_PATH = './www/index.html'
+
 // Require http module
 const http = require('http')
 // Require fs module
@@ -5,15 +12,16 @@ const fs = require('fs')
 
 // Require minimist module (make sure you install this one via npm).
 // Use minimist to process one argument `--port=` on the command line after `node server.js`.
-const http = require('minimist')
+const minimist = require('minimist')
+const { exit } = require('process')
 
 // Define allowed argument name 'port'.
-const arguments = require('minimist')(process.argv.slice(2))
-const argPort = args['port'] //joe
+const arguments = minimist(process.argv.slice(START_ARG_NUM))
+const argPort = arguments['port'] //joe
 
 // Define a const `port` using the argument from the command line. 
 // Make this const default to port 3000 if there is no argument given for `--port`.
-const port = argPort || process.env.PORT || 3000
+const port = argPort || process.env.PORT || DEFAULT_PORT
 
 // Use the fs module to create an arrow function using `fs.readFile`.
 // Use the documentation for the Node.js `fs` module. 
@@ -21,30 +29,29 @@ const port = argPort || process.env.PORT || 3000
 // The stuff that should be inside this function is all below.
 // If there is an error, put it on the console error, return, and exit with error code 1. 
 // Do not be nice about exiting.
-const data = fs.readFile('/Users/joe/test.txt', 'utf8', (err, data) => {
+fs.readFile(FILE_PATH, 'utf8', (err, data) => {
     if (err) {
         console.error(err)
-        return 1;  // Error happened
+        process.exit(ERROR)
     }
-    console.log(data)
-})
+    // Define a const `server` as an arrow function using http.createServer. 
+    // Use the documentation for the node.js http module. 
+    // The function should have three responses: 
+    // 1. status code 200, 
+    // 2. set a header with content type `text/html`, and 
+    // 3. end with the data that you are reading in from ./www/index.html.
+    const server = http.createServer((req, res) => {
+        res.statusCode = HTTP_OK_STATUS
+        res.setHeader('Content-Type', 'text/html')
+        // res.end(data)
+        res.end(data)
+    })
 
-// Define a const `server` as an arrow function using http.createServer. 
-// Use the documentation for the node.js http module. 
-// The function should have three responses: 
-// 1. status code 200, 
-// 2. set a header with content type `text/html`, and 
-// 3. end with the data that you are reading in from ./www/index.html.
-const server = http.createServer((req, res) => {
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'text/html')
-    res.end(data)
-})
-
-// Start the `server` const listening on the port defined by argument in your `port` const. 
-// Put the exact message `Server listening on port ${port}` on the console log. 
-server.listen(port, () => {
-    console.log(`Server running at port ${port}`)
+    // Start the `server` const listening on the port defined by argument in your `port` const. 
+    // Put the exact message `Server listening on port ${port}` on the console log. 
+    server.listen(port, () => {
+        console.log(`Server running at port ${port}`)
+    })
 })
 
 // That's it! You're all done!
