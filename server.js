@@ -32,8 +32,8 @@ const port = argPort || process.env.PORT || DEFAULT_PORT
 fs.readFile(FILE_PATH, 'utf8', (err, data) => {
     if (err) {
         console.error(err)
-        return
         process.exit(ERROR)
+        return
     }
     // Define a const `server` as an arrow function using http.createServer. 
     // Use the documentation for the node.js http module. 
