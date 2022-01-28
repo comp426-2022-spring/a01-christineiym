@@ -17,7 +17,7 @@ const { exit } = require('process')
 
 // Define allowed argument name 'port'.
 const arguments = minimist(process.argv.slice(START_ARG_NUM))
-const argPort = arguments['port'] //joe
+const argPort = arguments['port']
 
 // Define a const `port` using the argument from the command line. 
 // Make this const default to port 3000 if there is no argument given for `--port`.
@@ -32,6 +32,7 @@ const port = argPort || process.env.PORT || DEFAULT_PORT
 fs.readFile(FILE_PATH, 'utf8', (err, data) => {
     if (err) {
         console.error(err)
+        return
         process.exit(ERROR)
     }
     // Define a const `server` as an arrow function using http.createServer. 
